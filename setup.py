@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='fastapi-gateway',
+    name='mini-fastapi-gateway',
     version='0.0.1',
     packages=find_packages(),
     url='',
