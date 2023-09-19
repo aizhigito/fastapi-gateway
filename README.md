@@ -11,7 +11,7 @@ In the future, it will be possible to extract endpoints from files and use them 
 ## Installation
 
 ```bash
-pip install fastapi-gateway
+pip install mini-fastapi-gateway
 ```
 
 ## Usage
