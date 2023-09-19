@@ -9,6 +9,7 @@ setup(
     author='aizhigito',
     author_email='aizhigit94@gmail.com',
     description='FastAPI gateway',
+    download_url='https://github.com/aizhigito/fastapi-gateway/archive/refs/tags/v_001.tar.gz',
     install_requires=[
         'fastapi',
         'sqlalchemy',
