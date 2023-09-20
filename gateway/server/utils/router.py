@@ -7,7 +7,8 @@ Functions:
     match_path(path: str) -> tuple[str, dict] or tuple[None, None]
 """
 import re
-from typing import Callable, Dict, Type, TYPE_CHECKING
+import importlib
+from typing import Callable, Dict, Type, TYPE_CHECKING, Union
 from urllib.parse import urlparse
 
 import cachetools
@@ -37,6 +38,27 @@ def replace_last_string(match):
         return match_content  # If there's no dot, return the original content
 
 
+def process_params(scope: "Scope", param_type: str):
+    import_strings = []
+    string_params = []
+    params = getattr(scope, param_type, None)
+    if params:
+        for key, value in params.items():
+            matches = re.findall(pattern, value)
+            value = re.sub(pattern, replace_last_string, value)
+            if param_type == 'form_params':
+                string_params.append(f"{key}: Annotated[{value}, Form()]")
+            else:
+                string_params.append(f"{key}: {value}")
+            for match in matches:
+                res = get_module_path_and_class_name(match)
+                if (res is None) or (len(res) != 2):
+                    continue
+                import_strings.append(f"from {res[0]} import {res[1]}\n")
+
+    return import_strings, string_params
+
+
 # We will use this function to dynamically create a function that will be used as a route
 @cachetools.cached(cache, key=lambda func_name, *args: f"cached_f_{func_name}")
 def make_route(func_name: str, scope: "Scope", params: T = None) -> Callable[..., Response]:
@@ -53,7 +75,6 @@ def make_route(func_name: str, scope: "Scope", params: T = None) -> Callable[...
 
     # Create an empty dictionary 'd' to store the function
     d = {}
-    import_strings = []
     # Define the required parameters for the function
     string_params = ['request: Request', 'response: Response']
 
@@ -61,26 +82,17 @@ def make_route(func_name: str, scope: "Scope", params: T = None) -> Callable[...
     for key, value in params.items():
         string_params.append(f"{key}: {value.__name__}")
 
-    if scope.body_params:
-        for key, value in scope.body_params.items():
-            # Get a module which is inside a {}
-            matches = re.findall(pattern, value)
-            value = re.sub(pattern, replace_last_string, value)
-            string_params.append(f"{key}: {value}")
-            for match in matches:
-                module_path, class_name = match.rsplit('.', 1)
-                import_strings.append(f"from {module_path} import {class_name}\n")
-
-    if scope.query_params:
-        for key, value in scope.query_params.items():
-            string_params.append(f"{key}: {value}")
-
-    if scope.form_params:
-        for key, value in scope.form_params.items():
-            string_params.append(f"{key}: Annotated[{value}, Form()]")
+    import_strings, string_params1 = process_params(scope, 'body_params')
+    import_strings2, string_params2 = process_params(scope, 'form_params')
+    import_strings3, string_params3 = process_params(scope, 'query_params')
+    import_strings += import_strings2 + import_strings3
+    string_params += string_params1 + string_params2 + string_params3
 
     # Define the function using 'exec()'
-    function_definition = f"from typing import Annotated, Union, Optional\nfrom fastapi import Body, Form, Request, Response\n{''.join(import_strings)}async def {func_name}({','.join(string_params)}): pass"
+    function_definition = (f"from typing import Annotated, Union, Optional\n"
+                           f"from fastapi import Body, Form, Request, Depends, Response\n"
+                           f"{''.join(import_strings)}"
+                           f"async def {func_name}({','.join(string_params)}): pass")
 
     # Execute the function definition and store it in dictionary 'd'
     exec(function_definition, d)
@@ -169,3 +181,32 @@ def delete_cache(scope: "Scope") -> None:
         del cache["openapi_cache"]
 
     cache["need_reload"] = True
+
+
+def get_module_path_and_class_name(module_string: str) -> Union[tuple[str, str], None]:
+    """
+    This function will return the module path and the class name
+    :param module_string: str
+    :return: tuple[str, str]
+    """
+    try:
+        module_path, class_name = module_string.rsplit('.', 1)
+        return module_path, class_name
+    except ValueError:
+        return None
+
+
+def import_from_module_string(module_string: str) -> Union[Type, None]:
+    """
+    This function will import a class from a module string
+    :param module_string: str
+    :return: Type
+    """
+    try:
+        res = get_module_path_and_class_name(module_string)
+        if (res is None) or (len(res) != 2):
+            return None
+        module = importlib.import_module(res[0])
+        return getattr(module, res[1])
+    except (ImportError, AttributeError, ValueError):
+        return None

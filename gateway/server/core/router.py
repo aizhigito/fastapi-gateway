@@ -1,15 +1,14 @@
-import importlib
 from typing import Any
 
 import cachetools
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Depends
 from sqlalchemy.orm import selectinload
 
 from gateway.server.core.database import SessionLocal
 from gateway.server.core.database.models import Scope
 from gateway.server.core.database.crud import CRUD
 from gateway.server.core.decorators import to_microservice
-from gateway.server.utils.router import make_route, get_params_from_path, cache
+from gateway.server.utils.router import make_route, get_params_from_path, cache, import_from_module_string
 
 
 class ApiGateway(APIRouter):
@@ -28,15 +27,20 @@ class ApiGateway(APIRouter):
                     func_name = scope.name.replace(' ', '_').lower()
                     decorated_func = to_microservice(make_route(func_name, scope, params), scope)
                     response_model = Any
+                    dependencies = []
                     if scope.response_model:
-                        module_name, class_name = scope.response_model.rsplit(".", 1)
-                        module = importlib.import_module(module_name)
-                        response_model = getattr(module, class_name)
+                        response_model = import_from_module_string(scope.response_model) or Any
+                    if scope.dependencies:
+                        for dependency in scope.dependencies:
+                            dep = import_from_module_string(dependency)
+                            if dep:
+                                dependencies.append(Depends(dep))
 
                     self.add_api_route(
                         scope.path,
                         decorated_func,
                         response_model=response_model,
+                        dependencies=dependencies,
                         methods=[scope.method],
                         tags=[f"Microservice: {scope.microservice.name if scope.microservice else 'Without microservice'}"],
                     )
