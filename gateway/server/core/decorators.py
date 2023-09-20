@@ -86,4 +86,7 @@ def to_microservice(func, scope_model: "Scope"):
             for key, value in service_headers.items():
                 response.headers.append(key, value)
         response.status_code = status_code_from_service
+
+        return resp_data
+
     return wrapper

@@ -1,4 +1,5 @@
 import importlib
+from typing import Any
 
 import cachetools
 from fastapi import FastAPI, APIRouter
@@ -26,7 +27,7 @@ class ApiGateway(APIRouter):
                     params = get_params_from_path(scope.path)
                     func_name = scope.name.replace(' ', '_').lower()
                     decorated_func = to_microservice(make_route(func_name, scope, params), scope)
-                    response_model = None
+                    response_model = Any
                     if scope.response_model:
                         module_name, class_name = scope.response_model.rsplit(".", 1)
                         module = importlib.import_module(module_name)

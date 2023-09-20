@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON, UniqueConstraint
 from sqlalchemy.orm import relationship, Mapped
 
 from gateway.server.core.database import Base
@@ -56,8 +56,8 @@ class Scope(Base):
 
     id: int = Column(Integer, primary_key=True, index=True)
     name: str = Column(String, unique=True, index=True)
-    path: str = Column(String, unique=True, index=True)
-    microservice_path: str = Column(String, unique=True, index=True)
+    path: str = Column(String, unique=False, index=True)
+    microservice_path: str = Column(String, unique=False, index=True)
     is_active: bool = Column(Boolean, default=True)
     dependencies: list[str] = Column(JSON, default=[])
     method: Method = Column(String, default=Method.GET)
@@ -69,6 +69,11 @@ class Scope(Base):
 
     microservice_id: int = Column(Integer, ForeignKey('fastapi_gateway_microservices.id'))
     microservice: Mapped["Microservice"] = relationship("Microservice", back_populates="scopes")
+
+    __table_args__ = (
+        UniqueConstraint('microservice_id', 'microservice_path', 'method', name='unique_microservice_path'),
+        UniqueConstraint('path', 'method', name='unique_path')
+    )
 
     def __repr__(self):
         return f"<Scope(name='{self.name}', path='{self.path}')>"
