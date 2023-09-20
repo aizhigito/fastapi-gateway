@@ -5,6 +5,9 @@ description = ""
 authors = ["aizhigito <82809523+aizhigito@users.noreply.github.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+gateway-migrate = "gateway.server.core.management.migrate:main"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.103.1"
