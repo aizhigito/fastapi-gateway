@@ -1,12 +1,8 @@
-# FastApi Gateway
+# Mini FastApi Gateway
 
-FastApi Gateway is a simple gateway for microservices.
+FastAPI Gateway is a user-friendly microservices gateway built on the FastAPI framework, employing the same syntax for endpoint definitions. Its primary objective is to streamline the process of defining endpoints for microservices within a database and subsequently utilizing them within a gateway.
 
-It is based on FastApi and uses the same syntax for defining endpoints.
-Main purpose of this gateway is to easily define endpoints for microservices in a database and then use them in a gateway.
-
-Currently, it is only possible to define endpoints in a database and use them in a gateway.
-In the future, it will be possible to extract endpoints from files and use them in a gateway.
+At present, the gateway exclusively supports the definition of endpoints within a database and their utilization within the gateway. However, future enhancements are planned to enable the extraction of endpoints from files for use within the gateway.
 
 ## Installation
 
@@ -36,7 +32,7 @@ app.include_router(gateway_crud_router)
 ### Make migrations
 
 ```bash
-fastapi-gateway migrate
+gateway-migrate
 ```
 
 ### Now you can use your dynamic gateway
