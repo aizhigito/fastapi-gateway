@@ -2,14 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='mini-fastapi-gateway',
-    version='0.0.1-beta-1',
+    version='0.0.1-beta-2',
     packages=find_packages(),
     url='',
     license='',
     author='aizhigito',
     author_email='aizhigit94@gmail.com',
     description='FastAPI gateway',
-    download_url='https://github.com/aizhigito/fastapi-gateway/archive/refs/tags/v0.0.1-beta.tar.gz',
+    download_url='https://github.com/aizhigito/fastapi-gateway/archive/refs/tags/v0.0.1-beta-2.tar.gz',
     install_requires=[
         'fastapi',
         'sqlalchemy',
@@ -22,7 +22,7 @@ setup(
     extras_require={},
     entry_points={
         'console_scripts': [
-            'gateway = app.main:main'
+            'gateway-migrate=gateway.server.core.management.migrate:main'
         ]
     }
 )
