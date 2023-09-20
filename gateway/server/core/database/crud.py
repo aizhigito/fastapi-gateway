@@ -10,7 +10,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from server.core.database import Base
+from gateway.server.core.database import Base
 
 # Define the type hint for 'ModelType'
 ModelType = TypeVar("ModelType", bound=Base)

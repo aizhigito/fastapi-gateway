@@ -4,18 +4,18 @@ from typing import TYPE_CHECKING
 from aiohttp import ContentTypeError, ClientConnectorError
 from fastapi import Request, Response, HTTPException, status
 
-from server.core.request import fetch
-from server.utils.body import unzip_body_object
-from server.utils.form import unzip_form_params
-from server.utils.query import unzip_query_params
-from server.utils.request import create_request_data
-from server.utils.headers import (
+from gateway.server.core.request import fetch
+from gateway.server.utils.body import unzip_body_object
+from gateway.server.utils.form import unzip_form_params
+from gateway.server.utils.query import unzip_query_params
+from gateway.server.utils.request import create_request_data
+from gateway.server.utils.headers import (
     generate_headers_for_microservice, inheritance_service_headers,
 )
 
 
 if TYPE_CHECKING:
-    from server.core.database.models import Scope
+    from gateway.server.core.database.models import Scope
 
 
 def to_microservice(func, scope_model: "Scope"):

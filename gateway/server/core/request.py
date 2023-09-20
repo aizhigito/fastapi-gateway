@@ -4,9 +4,9 @@ from aiohttp import ClientSession, JsonPayload
 from async_timeout import timeout as _timeout
 from starlette.datastructures import Headers
 
-from server.utils.form import CustomFormData
-from server.utils.response import decode_json
-from server.utils.request import create_dict_if_not
+from gateway.server.utils.form import CustomFormData
+from gateway.server.utils.response import decode_json
+from gateway.server.utils.request import create_dict_if_not
 
 
 async def fetch(

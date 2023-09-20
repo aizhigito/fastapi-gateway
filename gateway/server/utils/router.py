@@ -14,7 +14,7 @@ import cachetools
 from fastapi import Response
 
 if TYPE_CHECKING:
-    from server.core.database.models import Scope
+    from gateway.server.core.database.models import Scope
 
 
 # Define the type hint for 'params'

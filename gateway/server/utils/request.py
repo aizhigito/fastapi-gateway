@@ -1,6 +1,6 @@
 from typing import Union, Any, Dict, Optional
 from aiohttp import JsonPayload
-from server.utils.form import CustomFormData
+from gateway.server.utils.form import CustomFormData
 
 T = Union[Dict[str, Any], CustomFormData, JsonPayload]
 

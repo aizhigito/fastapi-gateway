@@ -4,11 +4,11 @@ import cachetools
 from fastapi import FastAPI, APIRouter
 from sqlalchemy.orm import selectinload
 
-from server.core.database import SessionLocal
-from server.core.database.models import Scope
-from server.core.database.crud import CRUD
-from server.core.decorators import to_microservice
-from server.utils.router import make_route, get_params_from_path, cache
+from gateway.server.core.database import SessionLocal
+from gateway.server.core.database.models import Scope
+from gateway.server.core.database.crud import CRUD
+from gateway.server.core.decorators import to_microservice
+from gateway.server.utils.router import make_route, get_params_from_path, cache
 
 
 class ApiGateway(APIRouter):

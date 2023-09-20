@@ -1,7 +1,7 @@
 import pydantic
 from typing import Optional, Dict
 
-from server.core.database.models import Method
+from gateway.server.core.database.models import Method
 
 
 class MicroserviceCreate(pydantic.BaseModel):

@@ -2,7 +2,7 @@ from enum import Enum
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON
 from sqlalchemy.orm import relationship, Mapped
 
-from server.core.database import Base
+from gateway.server.core.database import Base
 
 
 class Method(str, Enum):

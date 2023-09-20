@@ -2,10 +2,10 @@ from copy import deepcopy
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from server.core.database import get_db
-from server.core.database.crud import CRUD
-from server.core.database.models import Microservice, Scope
-from server.core.database.schemas import (
+from gateway.server.core.database import get_db
+from gateway.server.core.database.crud import CRUD
+from gateway.server.core.database.models import Microservice, Scope
+from gateway.server.core.database.schemas import (
     MicroserviceCreate,
     ScopeCreate,
     ScopeRead,
@@ -13,7 +13,7 @@ from server.core.database.schemas import (
     ScopeUpdate,
     MicroserviceUpdate
 )
-from server.utils.router import delete_cache, cache
+from gateway.server.utils.router import delete_cache, cache
 
 gateway_router = APIRouter()
 
