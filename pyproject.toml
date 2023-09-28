@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mini-fastapi-gateway"
-version = "0.0.2-beta-2"
+version = "0.0.2-beta-3"
 packages = [
     { include = "gateway" }
 ]

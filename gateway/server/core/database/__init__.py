@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from gateway.server.core.config import settings
 
-SQLALCHEMY_DATABASE_URL = settings.db_url
+SQLALCHEMY_DATABASE_URL = settings.gateway_db_url
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
