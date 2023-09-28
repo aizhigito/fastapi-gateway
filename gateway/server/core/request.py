@@ -27,6 +27,14 @@ async def fetch(
                     params=query,
                     data=data
             ) as response:
-                response_json = await response.json()
-                decoded_json = decode_json(data=response_json)
-                return decoded_json, response.status, response.headers
+                content_type = response.headers.get('Content-Type', '')
+                
+                if 'application/json' in content_type:
+                    # Response is JSON
+                    response_json = await response.json()
+                    decoded_json = decode_json(data=response_json)
+                    return decoded_json, response.status, response.headers
+                else:
+                    # Response is text (or some other type)
+                    response_text = await response.text()
+                    return response_text, response.status, response.headers
