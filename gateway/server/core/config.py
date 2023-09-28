@@ -1,9 +1,8 @@
-from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    db_url: str = Field(default="sqlite:///sql_app.db", env="GATEWAY_DB_URL")
+    gateway_db_url: str = "sqlite:///sql_app.db"
 
 
 settings = Settings()
