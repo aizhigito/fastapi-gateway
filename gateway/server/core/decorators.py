@@ -1,8 +1,8 @@
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from aiohttp import ContentTypeError, ClientConnectorError
-from fastapi import Request, Response, HTTPException, status
+from fastapi import Request, Response, HTTPException, status, Depends
 
 from gateway.server.core.request import fetch
 from gateway.server.utils.body import unzip_body_object
@@ -12,13 +12,36 @@ from gateway.server.utils.request import create_request_data
 from gateway.server.utils.headers import (
     generate_headers_for_microservice, inheritance_service_headers,
 )
+from gateway.server.utils.router import import_from_module_string
 
 
 if TYPE_CHECKING:
     from gateway.server.core.database.models import Scope
 
 
-def to_microservice(func, scope_model: "Scope"):
+def to_microservice(
+        request_method,
+        func,
+        scope_model: "Scope"
+):
+    response_model = Any
+    dependencies = []
+    if scope_model.response_model:
+        response_model = import_from_module_string(scope_model.response_model) or Any
+    if scope_model.dependencies:
+        for dependency in scope_model.dependencies:
+            dep = import_from_module_string(dependency)
+            if dep:
+                dependencies.append(Depends(dep))
+
+    register_endpoint = request_method(
+        path=scope_model.path,
+        response_model=response_model,
+        dependencies=dependencies,
+        tags=[f"Microservice: {scope_model.microservice.name if scope_model.microservice else 'Without microservice'}"]
+    )
+
+    @register_endpoint
     @wraps(func)
     async def wrapper(request: Request, response: Response, **kwargs):
         scope = request.scope

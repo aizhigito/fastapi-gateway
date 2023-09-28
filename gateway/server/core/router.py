@@ -1,14 +1,12 @@
-from typing import Any
-
 import cachetools
-from fastapi import FastAPI, APIRouter, Depends
+from fastapi import FastAPI, APIRouter
 from sqlalchemy.orm import selectinload
 
 from gateway.server.core.database import SessionLocal
 from gateway.server.core.database.models import Scope
 from gateway.server.core.database.crud import CRUD
 from gateway.server.core.decorators import to_microservice
-from gateway.server.utils.router import make_route, get_params_from_path, cache, import_from_module_string
+from gateway.server.utils.router import make_route, get_params_from_path, cache
 
 
 class ApiGateway(APIRouter):
@@ -25,25 +23,8 @@ class ApiGateway(APIRouter):
                 if scope.is_active:
                     params = get_params_from_path(scope.path)
                     func_name = scope.name.replace(' ', '_').lower()
-                    decorated_func = to_microservice(make_route(func_name, scope, params), scope)
-                    response_model = Any
-                    dependencies = []
-                    if scope.response_model:
-                        response_model = import_from_module_string(scope.response_model) or Any
-                    if scope.dependencies:
-                        for dependency in scope.dependencies:
-                            dep = import_from_module_string(dependency)
-                            if dep:
-                                dependencies.append(Depends(dep))
-
-                    self.add_api_route(
-                        scope.path,
-                        decorated_func,
-                        response_model=response_model,
-                        dependencies=dependencies,
-                        methods=[scope.method],
-                        tags=[f"Microservice: {scope.microservice.name if scope.microservice else 'Without microservice'}"],
-                    )
+                    api_method = getattr(self, scope.method.lower())
+                    to_microservice(api_method, make_route(func_name, scope, params), scope)
 
 
 class GatewayRouter(FastAPI):
@@ -62,5 +43,5 @@ class GatewayRouter(FastAPI):
 
     @cachetools.cached(cache, key=lambda *args: "openapi_cache")
     def openapi(self):
-        self.openapi_schema = None
+        self.openapi_schema = None # noqa
         return super().openapi()

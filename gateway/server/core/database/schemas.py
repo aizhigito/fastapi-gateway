@@ -58,7 +58,7 @@ class ScopeCreate(pydantic.BaseModel):
     body_params: Optional[Dict[str, str]] = {}
     query_params: Optional[Dict[str, str]] = {}
     form_params: Optional[Dict[str, str]] = {}
-    override_headers: Optional[bool] = False
+    override_headers: Optional[bool] = True
     response_model: Optional[str] = ""
 
     class Config:

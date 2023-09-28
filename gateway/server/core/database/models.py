@@ -10,6 +10,7 @@ class Method(str, Enum):
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
+    PATCH = "PATCH"
 
 
 class Microservice(Base):
@@ -64,7 +65,7 @@ class Scope(Base):
     body_params: dict[str, str] = Column(JSON, default={})
     query_params: dict[str, str] = Column(JSON, default={})
     form_params: dict[str, str] = Column(JSON, default={})
-    override_headers: bool = Column(Boolean, default=False)
+    override_headers: bool = Column(Boolean, default=True)
     response_model: str = Column(String, default="")
 
     microservice_id: int = Column(Integer, ForeignKey('fastapi_gateway_microservices.id'))

@@ -14,7 +14,7 @@ gateway-migrate = "gateway.server.core.management.migrate:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.103.1"
+fastapi = "^0.103.2"
 pydantic-settings = "^2.0.3"
 sqlalchemy = "^2.0.21"
 alembic = "^1.12.0"
