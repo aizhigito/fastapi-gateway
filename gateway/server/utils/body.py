@@ -20,5 +20,7 @@ async def unzip_body_object(
                 response_body_dict.update(_body_dict)
             elif type(_body_dict) == list:
                 response_body_dict = _body_dict
+            elif type(_body_dict) == str:
+                response_body_dict.update({key: _body_dict})
         return JsonPayload(value=response_body_dict, dumps=ujson.dumps)
     return None
