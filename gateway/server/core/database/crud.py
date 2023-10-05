@@ -41,7 +41,7 @@ class CRUD(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         return db.query(self.model).filter(self.model.id == pk).first()
 
-    def get_multi(self, db: Session, *, skip: int = 0, limit: int = 100, options: list = None) -> List[ModelType]:
+    def get_multi(self, db: Session, *, skip: int = 0, limit: int = 10000, options: list = None) -> List[ModelType]:
         """
         This function will get multiple models from the database
         :param options: list
