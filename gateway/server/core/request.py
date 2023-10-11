@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from typing import Union, Optional
 
 from aiohttp import ClientSession, JsonPayload
@@ -27,14 +28,10 @@ async def fetch(
                     params=query,
                     data=data
             ) as response:
-                content_type = response.headers.get('Content-Type', '')
-                
-                if 'application/json' in content_type:
-                    # Response is JSON
+                try:
                     response_json = await response.json()
                     decoded_json = decode_json(data=response_json)
                     return decoded_json, response.status, response.headers
-                else:
-                    # Response is text (or some other type)
+                except JSONDecodeError:
                     response_text = await response.text()
                     return response_text, response.status, response.headers
