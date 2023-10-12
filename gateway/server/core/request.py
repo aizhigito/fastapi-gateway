@@ -1,7 +1,7 @@
 from json import JSONDecodeError
 from typing import Union, Optional
 
-from aiohttp import ClientSession, JsonPayload
+from aiohttp import ClientSession, JsonPayload, ContentTypeError
 from async_timeout import timeout as _timeout
 from starlette.datastructures import Headers
 
@@ -32,6 +32,8 @@ async def fetch(
                     response_json = await response.json()
                     decoded_json = decode_json(data=response_json)
                     return decoded_json, response.status, response.headers
-                except JSONDecodeError:
+                except (JSONDecodeError, ContentTypeError):
                     response_text = await response.text()
                     return response_text, response.status, response.headers
+                except Exception as e:
+                    return str(e), 500, response.headers
